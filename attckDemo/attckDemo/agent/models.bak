@@ -1,0 +1,56 @@
+from django.db import models
+
+from host.models import Host
+# Create your models here.
+
+
+class System_info(models.Model):
+    """获取的主机信息"""
+    hostip = models.ForeignKey(Host, on_delete=models.CASCADE, verbose_name='主机地址', related_name='system_info')
+    record_time = models.CharField(max_length=100, verbose_name='记录时间')
+    computer_name = models.CharField(max_length=100, verbose_name='物理主机名', default='')
+    cpu_brand = models.CharField(max_length=200, verbose_name='CPU信息')
+    cpu_type = models.CharField(max_length=100, verbose_name='CPU类型')
+    physical_memory = models.BigIntegerField(verbose_name='物理内存')
+
+    class Meta:
+        # 定义表名
+        db_table = "system_info"
+        # 定义后台显示名称
+        verbose_name = "主机信息"
+        # 定义复数形式名称
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.computer_name
+
+
+class Processes(models.Model):
+    """获得主机进程信息"""
+
+    AVATOR = (
+        (0, '未读'),
+        (1, '已读')
+    )
+    # 定义字段
+    hostip = models.ForeignKey(Host, on_delete=models.CASCADE, verbose_name='主机地址', related_name='processes')
+    pid = models.CharField(max_length=200, verbose_name='PID')
+    name = models.CharField(max_length=200, verbose_name='进程名')
+    parent = models.CharField(max_length=200, verbose_name='父进程')
+    path = models.CharField(max_length=200, verbose_name='进程文件路径', default='')
+    cmdline = models.CharField(max_length=10000, verbose_name='进行命令')
+    time = models.DateTimeField(verbose_name='添加时间', auto_now=True)
+    active = models.IntegerField(verbose_name='消息状态', default=0, choices=AVATOR)
+
+    class Meta:
+        # 定义表名
+        db_table = "processes"
+        # 定义在管理后台显示的名称
+        verbose_name = '进程'
+        # 定义复数时的名称（去除复数的s）
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
